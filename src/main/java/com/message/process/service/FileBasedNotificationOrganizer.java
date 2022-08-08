@@ -45,7 +45,7 @@ public class FileBasedNotificationOrganizer implements INotificationOrganizer {
   public void generateDataFile(int count) throws IOException {
     String[] products = new String[]{"apple", "banana", "tea"};
     String[] operations = new String[]{"ADD", "SUBTRACT", "MULTIPLY"};
-    Path filePath = Paths.get("./test.txt");
+    Path filePath = Paths.get("./test-data.txt");
     for (int i = 0; i < count; i++) {
       int type = i % 3 + 1;
       String row = "";
