@@ -18,15 +18,15 @@ import java.util.stream.Stream;
  * the test coverage for this class is 100%.
  */
 
-public class SalesMessageProcessor implements IMessageProcessor {
+public class SalesMessageProcessor implements IMessageProcessor<BasicNotification> {
 
   private Map<String, List<SalesRecord>> dataStorage = new HashMap<>();
   private Map<String, AdjustmentTracking> adjustmentEventStorage = new HashMap<>();
   private Map<String, BigDecimal> totalSalesPerType = new HashMap<>();
   private int notificationCounter;
 
-  @Override
-  public void handleBasicMessage(BasicNotification basicNotification) {
+
+  private void handleBasicMessage(BasicNotification basicNotification) {
     if (dataStorage.containsKey(basicNotification.getProduct())) {
       dataStorage.get(basicNotification.getProduct()).add(new SalesRecord(basicNotification.getValue()));
       totalSalesPerType.merge(basicNotification.getProduct(), basicNotification.getValue(), BigDecimal::add);
@@ -37,8 +37,8 @@ public class SalesMessageProcessor implements IMessageProcessor {
     }
   }
 
-  @Override
-  public void handleMessageWithOccurrences(OccurrencesNotification notification) {
+
+  private void handleMessageWithOccurrences(OccurrencesNotification notification) {
     if (dataStorage.containsKey(notification.getProduct())) {
       dataStorage.get(notification.getProduct()).addAll(Collections.nCopies(notification.getOccurrences(), new SalesRecord(notification.getValue())));
       totalSalesPerType.merge(notification.getProduct(), notification.getValue().multiply(BigDecimal.valueOf(notification.getOccurrences())), BigDecimal::add);
@@ -48,8 +48,8 @@ public class SalesMessageProcessor implements IMessageProcessor {
     }
   }
 
-  @Override
-  public void handleMessageWithAdjustments(AdjustmentNotification adjustmentNotification) {
+
+  private void handleMessageWithAdjustments(AdjustmentNotification adjustmentNotification) {
     if (!adjustmentEventStorage.containsKey(adjustmentNotification.getProduct()))
       adjustmentEventStorage.put(adjustmentNotification.getProduct(), new AdjustmentTracking());
     performAdjustmentOperation(adjustmentNotification);
